@@ -1,0 +1,13 @@
+PySimpleSOAP is a python SOAP library that ZimbraSOAP based on. Rather
+than require it as a dependency, it is included in ZimbraSOAP. This is
+due to a minor (two-line) patch required for ZimbraSOAP to function that
+has yet to be accepted to PySimpleSOAP (issue #89), however, it may also
+be conveneinet to have PySimpleSOAP included within the ZimbraSOAP
+distribution anyhow.
+
+PySimpleSOAP's project homepage is: http://code.google.com/p/pysimplesoap/
+
+The version included is PySimpleSOAP v1.10. The original distribution,
+the required patch and this documentation are included in pysimplesoap/.
+
+Many thanks to them for a great Python SOAP library.

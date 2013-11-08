@@ -1,0 +1,11 @@
+--- pysimplesoap/client.py	2013-08-24 13:30:12.000000000 -0700
++++ pysimplesoap/client.py	2013-11-07 23:51:31.109170352 -0800
+@@ -165,6 +165,8 @@
+             if parameters[0].children() is not None:
+                 for param in parameters[0].children():
+                     getattr(request, method).import_node(param)
++                for k,v in parameters[0].attributes().items():
++                    getattr(request, method)[k] = v
+         elif parameters:
+             # marshall parameters:
+             for k, v in parameters:  # dict: tag=valor
