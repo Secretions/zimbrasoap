@@ -14,7 +14,7 @@ setup(name='zimbraSOAP',
       description='Python Zimbra SOAP API Library',
       author='Joaquin Lopez',
       author_email='mrgus@disco-zombie.net',
-      packages=['zimbrasoap',],
+      packages=['zimbrasoap','zimbrasoap.pysimplesoap'],
       cmdclass = {"py2exe": build_installer},
      )
 
