@@ -3,6 +3,7 @@
 import types
 
 import re
+import logging
 
 import pysimplesoap.client
 import pysimplesoap.simplexml
@@ -24,11 +25,14 @@ class soap(object):
         self.authTokenLifetime = None # unused atm
         self.username = None          # username if we're a mail soap object
         self.zimbraId = None          # zimbraId if we're a mail soap object
-        self.debug = False            # trace soap calls
+        self.trace = False            # trace soap calls
 
         # blindly set args as values in object
         for arg,value in kwargs.items():
             setattr(self, arg, value)
+
+        if self.trace:
+            self.set_trace(True)
 
     ## Functions for making SOAP requests
     def generic_zimbra_soap_request(self,
@@ -137,7 +141,7 @@ class soap(object):
                 namespace =  self.namespace, # zimbraMail, zimbraAdmin, etc.
                 # saying it's oracle allows empty request tags (ie NoOp())
                 soap_server = 'oracle',
-                soap_ns='soap', trace = self.debug, ns = False, exceptions = True)
+                soap_ns='soap', ns = False, exceptions = True)
 
     ## Create <Header /> tag for SOAP auths with auth token if available
     def construct_zimbra_header(self):
@@ -182,6 +186,23 @@ class soap(object):
         def wrapper(*args, **kwargs):
             return self.generic_zimbra_soap_request(key, *args, **kwargs)
         return wrapper
+
+    ## Turns soap tracing on/off
+    def set_trace(self, toggle):
+        log = logging.getLogger('zimbrasoap.pysimplesoap.client')
+
+        # due to overriding __getattr__, nonexistent attrs are functions
+        if self.log_handler and type(self.log_handler) is not types.FunctionType:
+            log.removeHandler(self.log_handler)
+            self.log_handler.close() # do we need both this and above?
+
+        self.log_handler = logging.StreamHandler()
+        self.log_handler.setFormatter(logging.Formatter(fmt='%(message)s'))
+        if toggle:
+            log.setLevel(logging.DEBUG)
+        else:
+            log.setLevel(logging.WARNING)
+        log.addHandler(self.log_handler)
 
     ### Specific api calls that need extra help
 
