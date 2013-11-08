@@ -1,3 +1,10 @@
+# vim swap files
+*.swp
+
+# Zimbra "localconfig.xml" files, for testing
+localconfig.xml
+
+### Default github python .gitignore
 *.py[cod]
 
 # C extensions
