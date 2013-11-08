@@ -3,7 +3,7 @@ ZimbraSOAP
 
 Description
 -----------
-Python library for interfacing with [Zimbra's][http://www.zimbra.com] [SOAP API][http://files.zimbra.com/docs/soap_api/8.0/soapapi-zimbra-doc/api-reference/index.html]. It's based on [PySimpleSOAP][http://code.google.com/p/pysimplesoap/] and provides a framework to make and respond to any given Zimbra SOAP API request.
+Python library for interfacing with [Zimbra's](http://www.zimbra.com) [SOAP API](http://files.zimbra.com/docs/soap_api/8.0/soapapi-zimbra-doc/api-reference/index.html). It's based on [PySimpleSOAP](http://code.google.com/p/pysimplesoap/) and provides a framework to make and respond to any given Zimbra SOAP API request.
 
 Example
 -------
@@ -46,4 +46,4 @@ Example
 
 TODO
 ----
-* Could support [XPath-like syntax of zmsoap][http://wiki.zimbra.com/wiki/Zmsoap]
+* Could support [XPath-like syntax of zmsoap](http://wiki.zimbra.com/wiki/Zmsoap)
