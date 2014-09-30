@@ -26,6 +26,8 @@ class soap(object):
         self.username = None          # username if we're a mail soap object
         self.zimbraId = None          # zimbraId if we're a mail soap object
         self.trace = False            # trace soap calls
+        self.port = 7071              # Default admin port
+        self.timeout = 60             # Default timeout for soap requests
 
         # blindly set args as values in object
         for arg,value in kwargs.items():
@@ -141,7 +143,7 @@ class soap(object):
                 namespace =  self.namespace, # zimbraMail, zimbraAdmin, etc.
                 # saying it's oracle allows empty request tags (ie NoOp())
                 soap_server = 'oracle',
-                soap_ns='soap', ns = False, exceptions = True)
+                soap_ns='soap', ns = False, exceptions = True, timeout = self.timeout)
 
     ## Create <Header /> tag for SOAP auths with auth token if available
     def construct_zimbra_header(self):
@@ -229,16 +231,20 @@ class soap(object):
 ### Admin interface soap calls (urn / url change)
 class admin(soap):
     def __init__(self, **kwargs):
+        if 'port' not in kwargs:
+            kwargs['port'] = 7071
         if not re.match('^http', kwargs['server']):
-            kwargs['server'] = "https://{0}:7071/service/admin/soap".format(kwargs['server'])
+            kwargs['server'] = "https://{0}:{1}/service/admin/soap".format(kwargs['server'], kwargs['port'])
         kwargs['namespace'] = 'urn:zimbraAdmin'
         self.init(**kwargs)
 
 ### zimbraMail soap calls (urn change)
 class mail(soap):
     def __init__(self, **kwargs):
+        if 'port' not in kwargs:
+            kwargs['port'] = 443
         if not re.match('^http', kwargs['server']):
-            kwargs['server'] = "https://{0}/service/soap".format(kwargs['server'])
+            kwargs['server'] = "https://{0}:{1}/service/soap".format(kwargs['server'], kwargs['port'])
         kwargs['namespace'] = 'urn:zimbraMail'
         self.init(**kwargs)
 
