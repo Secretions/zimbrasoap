@@ -210,7 +210,15 @@ class soap(object):
 
     ## Auth (to get token into our object)--may not be the same across services
     def Auth(self, *args, **kwargs):
+        # Auth works differently in the urn:zimbraAdmin namespace
+        # We could just use this everywhere, but worried about breaking existing code
+        namespace = self.namespace
+        if self.namespace == 'urn:zimbraMail':
+            self.namespace = 'urn:zimbraAccount'
+
         response = self.generic_zimbra_soap_request('Auth', *args, **kwargs)
+
+        self.namespace = namespace
         self.authToken = response.authToken
         self.authTokenLifetime = response.lifetime
         return response
