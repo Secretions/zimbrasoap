@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# On python2.7, prevents included pysimplesoap
+# from being zimbrasoap.pysimplesoap
+from __future__ import absolute_import
+
 import types
 
 import re
@@ -195,7 +199,7 @@ class soap(object):
     ## This is global to the zimbrasoap module so that multiple instances
     ## don't cause multiple loggings (this was much nicer before logger...)
     def set_trace(self, toggle):
-        log = logging.getLogger('zimbrasoap.pysimplesoap.client')
+        log = logging.getLogger('pysimplesoap.client')
 
         # due to overriding __getattr__, nonexistent attrs are functions
         if zimbrasoap.log_handler and type(zimbrasoap.log_handler) is not types.FunctionType:
