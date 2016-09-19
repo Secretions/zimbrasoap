@@ -60,6 +60,7 @@ class soap(object):
             method = '{0}Request'.format(method)
 
         params = pysimplesoap.simplexml.SimpleXMLElement('<{0} />'.format(method))
+        params['xmlns'] = self.namespace
 
         # If given a straight SimpleXMLElement object, import it directly
         if args:
