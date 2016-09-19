@@ -28,6 +28,7 @@ class soap(object):
         self.trace = False            # trace soap calls (gloal to module, see set_trace)
         self.port = 7071              # Default admin port
         self.timeout = 60             # Default timeout for soap requests
+        self.suppress_suffix = False  # Whether to suppress tacking on 'Request' (ie zmsoap.Auth() -> <AuthRequest />)
 
         # blindly set args as values in object
         for arg,value in kwargs.items():
@@ -186,7 +187,7 @@ class soap(object):
     ## Allows us to call soap.RequestName
     def __getattr__(self, key):
         def wrapper(*args, **kwargs):
-            return self.generic_zimbra_soap_request(key, *args, **kwargs)
+            return self.generic_zimbra_soap_request(key, self.suppress_suffix, *args, **kwargs)
         return wrapper
 
     ## Turns soap tracing on/off
@@ -218,7 +219,7 @@ class soap(object):
         if self.namespace == 'urn:zimbraMail':
             self.namespace = 'urn:zimbraAccount'
 
-        response = self.generic_zimbra_soap_request('Auth', *args, **kwargs)
+        response = self.generic_zimbra_soap_request('Auth', False, *args, **kwargs)
 
         self.namespace = namespace
         self.authToken = response.authToken
