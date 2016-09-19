@@ -25,7 +25,7 @@ class soap(object):
         self.authTokenLifetime = None # unused atm
         self.username = None          # username if we're a mail soap object
         self.zimbraId = None          # zimbraId if we're a mail soap object
-        self.trace = False            # trace soap calls
+        self.trace = False            # trace soap calls (gloal to module, see set_trace)
         self.port = 7071              # Default admin port
         self.timeout = 60             # Default timeout for soap requests
 
@@ -190,21 +190,23 @@ class soap(object):
         return wrapper
 
     ## Turns soap tracing on/off
+    ## This is global to the zimbrasoap module so that multiple instances
+    ## don't cause multiple loggings (this was much nicer before logger...)
     def set_trace(self, toggle):
         log = logging.getLogger('zimbrasoap.pysimplesoap.client')
 
         # due to overriding __getattr__, nonexistent attrs are functions
-        if self.log_handler and type(self.log_handler) is not types.FunctionType:
-            log.removeHandler(self.log_handler)
-            self.log_handler.close() # do we need both this and above?
+        if zimbrasoap.log_handler and type(zimbrasoap.log_handler) is not types.FunctionType:
+            log.removeHandler(zimbrasoap.log_handler)
+            zimbrasoap.log_handler.close() # do we need both this and above?
 
-        self.log_handler = logging.StreamHandler()
-        self.log_handler.setFormatter(logging.Formatter(fmt='%(message)s'))
+        zimbrasoap.log_handler = logging.StreamHandler()
+        zimbrasoap.log_handler.setFormatter(logging.Formatter(fmt='%(message)s'))
         if toggle:
             log.setLevel(logging.DEBUG)
         else:
             log.setLevel(logging.WARNING)
-        log.addHandler(self.log_handler)
+        log.addHandler(zimbrasoap.log_handler)
 
     ### Specific api calls that need extra help
 
