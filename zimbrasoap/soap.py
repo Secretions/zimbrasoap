@@ -214,6 +214,53 @@ class soap(object):
             log.setLevel(logging.WARNING)
         log.addHandler(zimbrasoap.log_handler)
 
+    ### Ripped from stackoverflow
+    ### Current host I'm working with borks on tls negotiations supporting 1.2
+    # Start of the workaround for SSL3
+    # This is a monkey patch / module function overriding
+    # to allow pages that only work with SSL3
+    # zmsoap_object.set_ssl(ssl.PROTOCOL_TLSv1) etc.
+    def set_ssl(self, ssl_level):
+        # Build the appropriate socket wrapper for ssl
+        try:
+            import ssl # python 2.6
+            import httplib2
+            httplib2.ssl_SSLError = ssl.SSLError
+            def _ssl_wrap_socket(sock, key_file, cert_file,
+                                 disable_validation, ca_certs):
+                if disable_validation:
+                    cert_reqs = ssl.CERT_NONE
+                else:
+                    cert_reqs = ssl.CERT_REQUIRED
+                # Our fix for sites the only accepts SSL3
+                try:
+                    # Trying SSLv3 first
+                    tempsock = ssl.wrap_socket(sock, keyfile=key_file, certfile=cert_file,
+                                               cert_reqs=cert_reqs, ca_certs=ca_certs,
+                                               ssl_version=ssl_level)
+                except ssl.SSLError as e:
+                    tempsock = ssl.wrap_socket(sock, keyfile=key_file, certfile=cert_file,
+                                               cert_reqs=cert_reqs, ca_certs=ca_certs,
+                                               ssl_version=ssl_level)
+                return tempsock
+            httplib2._ssl_wrap_socket = _ssl_wrap_socket
+        except (AttributeError, ImportError):
+            httplib2.ssl_SSLError = None
+            def _ssl_wrap_socket(sock, key_file, cert_file,
+                                 disable_validation, ca_certs):
+                if not disable_validation:
+                    raise httplib2.CertificateValidationUnsupported(
+                            "SSL certificate validation is not supported without "
+                            "the ssl module installed. To avoid this error, install "
+                            "the ssl module, or explicity disable validation.")
+                ssl_sock = socket.ssl(sock, key_file, cert_file)
+                return httplib.FakeSocket(sock, ssl_sock)
+            httplib2._ssl_wrap_socket = _ssl_wrap_socket
+
+        # End of the workaround for SSL3
+
+
+
     ### Specific api calls that need extra help
 
     ## Auth (to get token into our object)--may not be the same across services
