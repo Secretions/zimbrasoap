@@ -143,13 +143,29 @@ class soap(object):
 
     ## Create soap client request object
     def create_zimbra_request(self):
-        return pysimplesoap.client.SoapClient(
+        # If pysimplesoap with log_id support is available, use that
+        try:
+            soap_result = pysimplesoap.client.SoapClient(
                 location = self.server,
                 action = self.server,
                 namespace =  self.namespace, # zimbraMail, zimbraAdmin, etc.
                 # saying it's oracle allows empty request tags (ie NoOp())
                 soap_server = 'oracle',
-                soap_ns='soap', ns = False, exceptions = True, timeout = self.timeout)
+                soap_ns='soap', ns = False, exceptions = True, timeout = self.timeout,
+                trace = self.trace, log_id = False)
+        except TypeError as e:
+            if str(e) == "__init__() got an unexpected keyword argument 'log_id'":
+                soap_result = pysimplesoap.client.SoapClient(
+                    location = self.server,
+                    action = self.server,
+                    namespace =  self.namespace, # zimbraMail, zimbraAdmin, etc.
+                    # saying it's oracle allows empty request tags (ie NoOp())
+                    soap_server = 'oracle',
+                    soap_ns='soap', ns = False, exceptions = True, timeout = self.timeout,
+                    trace = self.trace)
+            else:
+                raise
+        return soap_result
 
     ## Create <Header /> tag for SOAP auths with auth token if available
     def construct_zimbra_header(self):
