@@ -34,7 +34,7 @@ Example
     # (ie zimbraMailStatus / enabled)
     print zimbra.ParseAttributes(response.account.a)
 
-    # Call ModifyAccountRequest to set "zimbraMailStatus" to "closed"
+    # Call ModifyAccountRequest to set "zimbraMailStatus" to "active"
     #
     # Sends request similar to:
     #
@@ -43,6 +43,19 @@ Example
     #   <id>e78b0780-3802-411c-8151-a5a7943cdb41</id>
     # </ModifyAccountRequest>
     zimbra.ModifyAccount(id = response.account['id'], a = {'n':'zimbraAccountStatus', 'value':'active'})
+
+    # Call ModifyAccountRequest again to set multiple attributes
+    # Sends request similar to:
+    #
+    # <ModifyAccountRequest xmlns="urn:zimbraAdmin">
+    #   <a n="givenName">Jane</a>
+    #   <a n="initials">J</a>
+    #   <a n="sn">Doe</a>
+    #   <id>e78b0780-3802-411c-8151-a5a7943cdb41</id>
+    # </ModifyAccountRequest>
+    zimbra.ModifyAccount(id = response.account['id'], a = [{'n':'givenName', 'value':'Jane'},
+                                                           {'n':'initials', 'value':'J'},
+                                                           {'n':'sn', 'value':'Doe'}])
 
 TODO
 ----
